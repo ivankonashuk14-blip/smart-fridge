@@ -345,6 +345,57 @@ footer p { margin: 0; }
 .footer-brand { color: var(--ink); }
 footer { border-top-color: var(--line); background: var(--cream); color: var(--muted); }
 
+/* Typography pass: более ясная и современная иерархия, без смены палитры */
+body {
+  font-family: "Avenir Next", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  font-feature-settings: "kern" 1, "liga" 1;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, .brand, .nav-link, button, input, select, output {
+  font-family: "Avenir Next", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+}
+h1, h2, h3 { letter-spacing: -0.045em; }
+h1 { font-size: clamp(50px, 5.7vw, 80px); line-height: .98; font-weight: 720; letter-spacing: -0.065em; }
+h1 em { display: inline-block; padding-bottom: .08em; font-style: italic; font-weight: 600; letter-spacing: -0.07em; }
+.section-heading h2, .recipes-header h2 { font-size: 26px; line-height: 1.08; font-weight: 720; }
+.recipes-header h2 { font-size: 34px; }
+.recipe-content h3 { font-size: 18px; line-height: 1.22; font-weight: 720; letter-spacing: -0.035em; }
+.hero-text { max-width: 560px; font-size: 16px; line-height: 1.65; letter-spacing: -.01em; }
+.eyebrow { line-height: 1.25; font-weight: 760; }
+.quick-add, .filter, .surprise-button, .outline-button, .load-more { letter-spacing: -.01em; }
+.ingredient-info strong { font-size: 13px; letter-spacing: -.015em; }
+.ingredient-info small { font-size: 10px; line-height: 1.35; }
+.recipe-meta { font-size: 10px; line-height: 1.35; }
+.recipe-meta svg { flex: 0 0 auto; }
+.freshness-summary strong, .favorites-mini-card strong { letter-spacing: -.015em; }
+.modal-content h2, .filter-modal-card h2, .account-modal-card h2, .streak-modal-card h2 { font-weight: 720; letter-spacing: -.055em; line-height: 1.05; }
+.modal-content li { font-size: 13px; line-height: 1.6; }
+.modal-content li small { font-size: 10px; }
+.secondary-heading h1 { font-size: clamp(48px, 5vw, 72px); line-height: .98; }
+button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible {
+  outline: 3px solid rgba(194,141,78,.52);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+@media (max-width: 540px) {
+  h1 { font-size: 52px; letter-spacing: -.06em; }
+  .hero-text { font-size: 15px; line-height: 1.6; }
+  .recipes-header h2 { font-size: 28px; }
+  .section-heading h2 { font-size: 24px; }
+}
+
 /* Унифицированные hover/active-состояния для всех интерактивных элементов */
 button:not(:disabled) { transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease, border-color .2s ease, color .2s ease; }
 button:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(36, 71, 58, .10); }

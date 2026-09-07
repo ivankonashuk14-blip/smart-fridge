@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#123c34" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Smart Fridge" />
+  <meta name="description" content="Умный холодильник подскажет, что приготовить из продуктов, которые уже есть дома." />
+  <title>Умный холодильник — готовьте из того, что есть</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Умный холодильник — главная">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40" role="img"><rect x="10" y="4" width="20" height="32" rx="6"/><path d="M10 18h20M25 11v4M25 23v6"/></svg>
+        </span>
+        <span>Умный<br><strong>холодильник</strong></span>
+      </a>
+
+      <nav class="main-nav" aria-label="Основная навигация">
+        <button class="nav-link active" data-view="recipes">Рецепты</button>
+        <button class="nav-link" data-view="planner">Моё меню</button>
+        <button class="nav-link" data-view="favorites">Избранное</button>
+        <button class="nav-link" data-view="catalog">Каталог</button>
+      </nav>
+
+      <div class="top-actions">
+        <button class="streak" id="streak-button" title="Открыть статистику серии">
+          <span>🔥</span><strong id="streak-count">7</strong><span class="streak-label">дней</span>
+        </button>
+        <button class="icon-button" id="shopping-button" aria-label="Список покупок">
+          <svg viewBox="0 0 24 24"><path d="M3 4h2l2.2 10h10.9l2-7H6M9 19.5a.5.5 0 1 0 0 1 .5.5 0 0 0 0-1ZM17 19.5a.5.5 0 1 0 0 1 .5.5 0 0 0 0-1Z"/></svg>
+          <span class="badge" id="shopping-count">2</span>
+        </button>
+        <button class="avatar" id="profile-button" aria-label="Открыть регистрацию">И</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow"><span></span> Вкусно. Просто. Без отходов.</p>
+          <h1>Что приготовим<br><em>сегодня?</em></h1>
+          <p class="hero-text">Отметьте продукты, которые есть дома, — мы подберём лучшие рецепты и поможем ничего не выбрасывать.</p>
+
+          <div class="fridge-search-wrap">
+            <div class="fridge-search">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
+              <input id="ingredient-search" type="text" placeholder="Добавить продукт, например авокадо" autocomplete="off" />
+              <button id="scan-button" title="Сканировать чек" aria-label="Сканировать чек">
+                <svg viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M8 9h8v6H8z"/></svg>
+              </button>
+            </div>
+            <div class="suggestions" id="suggestions" hidden></div>
+          </div>
+
+          <button class="all-products-cta" id="all-products-button" type="button">
+            <span class="all-products-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg></span>
+            <span class="all-products-copy"><strong>Все продукты</strong><small>Открыть полный каталог из 132 позиций</small></span>
+            <span class="all-products-arrow" aria-hidden="true">→</span>
+          </button>
+        </div>
+
+        <div class="hero-visual" aria-label="Иллюстрация холодильника с продуктами">
+          <div class="blob blob-one"></div>
+          <div class="blob blob-two"></div>
+          <div class="fridge-illustration">
+            <div class="fridge-top">
+              <span class="fridge-brand-dot"></span>
+              <span class="fridge-handle"></span>
+              <span class="fridge-note">не забудь<br><b>зелень</b> 🌿</span>
+              <span class="food f-tomato">🍅</span>
+              <span class="food f-cheese">🧀</span>
+              <span class="food f-pepper">🌶️</span>
+            </div>
+            <div class="fridge-bottom"><span class="fridge-handle"></span><span class="food f-lemon">🍋</span></div>
+          </div>
+          <div class="floating-card fc-one"><span>🥬</span><div><small>Свежесть</small><strong>Ещё 2 дня</strong></div></div>
+              <div class="floating-card fc-two"><span>✨</span><div><small>Подобрано</small><strong>124 рецепта</strong></div></div>
+        </div>
+      </section>
+
+      <section class="workspace" id="recipes-view">
+        <aside class="pantry-card">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow small"><span></span> Сейчас дома</p>
+              <h2>Мой холодильник</h2>
+            </div>
+            <span class="count-pill" id="ingredient-count">0</span>
+          </div>
+
+          <button class="freshness-summary" id="freshness-summary" type="button" aria-expanded="false">
+            <div class="freshness-icon">🌱</div>
+            <div><strong>Всё под контролем</strong><p><span id="expiring-count">2 продукта</span> лучше использовать сегодня</p></div>
+            <span class="freshness-chevron">⌄</span>
+          </button>
+          <div class="expiring-details" id="expiring-details" hidden></div>
+
+          <div class="ingredient-list" id="ingredient-list"></div>
+
+          <button class="outline-button" id="add-product-button">
+            <span>＋</span> Добавить продукт
+          </button>
+
+          <label class="expiry-toggle">
+            <input type="checkbox" id="expiry-only" />
+            <span class="toggle-track"><span></span></span>
+            <span><strong>Спасти продукты</strong><small>Сначала те, что скоро испортятся</small></span>
+          </label>
+
+          <button class="favorites-mini-card" id="favorites-mini-card" type="button">
+            <span class="favorites-mini-icon">♥</span>
+            <span><strong>Мои избранные</strong><small id="favorites-mini-text">1 сохранённый рецепт</small></span>
+            <span class="favorites-mini-arrow">→</span>
+          </button>
+        </aside>
+
+        <div class="recipes-area">
+          <div class="recipes-header">
+            <div>
+              <p class="eyebrow small"><span></span> Персональная подборка</p>
+              <h2>Подходит вам <span id="recipe-total">0 рецептов</span></h2>
+            </div>
+            <button class="surprise-button" id="surprise-button"><span>✦</span> Удивить меня</button>
+          </div>
+
+          <div class="filter-row" id="filters">
+            <button class="filter active" data-filter="all">Все рецепты</button>
+            <button class="filter" data-filter="ready"><span class="green-dot"></span> Можно готовить</button>
+            <button class="filter" data-filter="one-missing">Не хватает одного</button>
+            <button class="filter" data-filter="fast">До 30 минут</button>
+            <button class="filter" data-filter="light">До 500 ккал</button>
+            <button class="filter settings-filter" id="filter-settings" aria-label="Другие фильтры">☷</button>
+          </div>
+
+          <div class="dish-type-row" id="dish-type-filters" aria-label="Тип блюда">
+            <span class="dish-type-label">Хочу приготовить:</span>
+            <button class="dish-type-filter active" data-dish-type="all" type="button">Всё</button>
+            <button class="dish-type-filter" data-dish-type="salad" type="button">🥗 Салат</button>
+            <button class="dish-type-filter" data-dish-type="hot" type="button">🍲 Горячее</button>
+            <button class="dish-type-filter" data-dish-type="soup" type="button">🍵 Суп</button>
+            <button class="dish-type-filter" data-dish-type="dessert" type="button">🍰 Десерт</button>
+            <button class="dish-type-filter" data-dish-type="breakfast" type="button">🍳 Завтрак</button>
+            <button class="dish-type-filter" data-dish-type="snack" type="button">✨ Перекус</button>
+            <button class="dish-type-filter" data-dish-type="drink" type="button">🥤 Напиток</button>
+            <button class="dish-type-filter" data-dish-type="pp" type="button">🥦 ПП</button>
+          </div>
+
+          <div class="recipe-grid" id="recipe-grid"></div>
+          <button class="load-more" id="load-more">Показать ещё рецепты <span>↓</span></button>
+        </div>
+      </section>
+
+      <section class="secondary-view" id="planner-view" hidden>
+        <button class="catalog-back-button" id="planner-back-button" type="button" aria-label="Вернуться к рецептам"><span aria-hidden="true">←</span></button>
+        <div class="secondary-heading"><p class="eyebrow"><span></span> План без лишних забот</p><h1>Меню на неделю</h1><p>Перетаскивайте любимые блюда по дням и получайте общий список покупок.</p></div>
+        <div class="week-grid" id="week-grid"></div>
+      </section>
+
+      <section class="secondary-view" id="favorites-view" hidden>
+        <button class="catalog-back-button" id="favorites-back-button" type="button" aria-label="Вернуться к рецептам"><span aria-hidden="true">←</span></button>
+        <div class="secondary-heading"><p class="eyebrow"><span></span> Ваша коллекция</p><h1>Любимые рецепты</h1><p>Всё, что вы сохранили, — в одном месте.</p></div>
+        <div class="recipe-grid" id="favorites-grid"></div>
+      </section>
+
+      <section class="secondary-view catalog-view" id="catalog-view" hidden>
+        <button class="catalog-back-button" id="catalog-back-button" type="button" aria-label="Вернуться к рецептам"><span aria-hidden="true">←</span></button>
+        <div class="secondary-heading"><p class="eyebrow"><span></span> Всё под рукой</p><h1>Каталог продуктов</h1><p>Посмотрите, что можно добавить в холодильник. Нажмите «Добавить», чтобы сразу увидеть подходящие рецепты.</p></div>
+        <div class="catalog-toolbar">
+          <label class="catalog-search" for="catalog-search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
+            <input id="catalog-search" type="search" placeholder="Найти продукт в каталоге" autocomplete="off" />
+          </label>
+          <span class="catalog-count" id="catalog-count"></span>
+        </div>
+        <div class="catalog-grid" id="catalog-grid"></div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-brand"><span class="brand-mark small-mark">❄</span><strong>Умный холодильник</strong></div>
+      <p>Готовим вкусно и бережём продукты вместе.</p>
+      <span>Сделано с заботой о вашем ужине ♡</span>
+    </footer>
+  </div>
+
+  <div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
+  <aside class="shopping-drawer" id="shopping-drawer" aria-hidden="true">
+    <div class="drawer-header"><div><p class="eyebrow small"><span></span> В магазин</p><h2>Список покупок</h2></div><button class="close-button" id="drawer-close">×</button></div>
+    <p class="drawer-lead">Добавляйте недостающие продукты прямо из рецептов.</p>
+    <div id="shopping-list"></div>
+    <button class="primary-button full" id="copy-list">Скопировать список</button>
+  </aside>
+
+  <div class="modal-backdrop" id="scan-modal" hidden>
+    <section class="scan-modal-card" role="dialog" aria-modal="true" aria-labelledby="scan-title">
+      <button type="button" class="modal-close" id="scan-close" aria-label="Закрыть сканирование">×</button>
+      <div class="scan-modal-icon">🧾</div>
+      <p class="eyebrow small"><span></span> Умный сканер</p>
+      <h2 id="scan-title">Сканируем чек</h2>
+      <p class="scan-lead">Сфотографируйте чек или загрузите готовое фото. Мы найдём знакомые продукты и добавим их в холодильник.</p>
+      <div class="scan-actions">
+        <button type="button" class="primary-button" id="scan-camera-button">Сфотографировать</button>
+        <button type="button" class="outline-button" id="scan-upload-button">Загрузить фото</button>
+      </div>
+      <input id="scan-camera-input" type="file" accept="image/*" capture="environment" hidden>
+      <input id="scan-upload-input" type="file" accept="image/*" hidden>
+      <div class="scan-dropzone" id="scan-dropzone" tabindex="0" role="button" aria-label="Перетащите сюда фотографию чека">
+        <span class="scan-dropzone-icon">⌁</span>
+        <strong>Или перетащите снимок сюда</strong>
+        <small>JPG, PNG или WEBP · лучше при хорошем освещении</small>
+      </div>
+      <div class="scan-preview" id="scan-preview" hidden>
+        <img id="scan-preview-image" alt="Предпросмотр фотографии чека">
+        <button type="button" class="scan-change-button" id="scan-change-button">Выбрать другой снимок</button>
+      </div>
+      <div class="scan-progress" id="scan-progress" hidden>
+        <div class="scan-progress-track"><span id="scan-progress-bar"></span></div>
+        <p id="scan-progress-label">Подготавливаем распознавание…</p>
+      </div>
+      <div class="scan-results" id="scan-results" hidden>
+        <div class="scan-results-heading"><strong id="scan-results-title">Нашли продукты</strong><span id="scan-confidence"></span></div>
+        <div class="scan-found-list" id="scan-found-list"></div>
+        <button type="button" class="primary-button full" id="scan-add-button">Добавить выбранные продукты</button>
+      </div>
+      <p class="scan-note" id="scan-note">Фото обрабатывается в браузере. Если строка не распознается, попробуйте снимок крупнее и ровнее.</p>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="recipe-modal" hidden>
+    <article class="recipe-modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close" id="modal-close">×</button>
+      <div class="modal-hero" id="modal-hero"><span id="modal-emoji"></span></div>
+      <div class="modal-content">
+        <p class="eyebrow small"><span></span> Пошаговый рецепт</p>
+        <h2 id="modal-title"></h2>
+        <div class="modal-meta" id="modal-meta"></div>
+        <div class="portion-control"><span>Количество порций</span><div><button id="portion-minus">−</button><strong id="portion-count">2</strong><button id="portion-plus">＋</button></div></div>
+        <h3>Ингредиенты</h3><ul id="modal-ingredients"></ul>
+        <h3>Как приготовить</h3><ol id="modal-steps"></ol>
+        <button class="primary-button full" id="cook-button">Начать готовить</button>
+      </div>
+    </article>
+  </div>
+
+  <div class="modal-backdrop" id="filter-modal" hidden>
+    <form class="filter-modal-card" id="advanced-filter-form">
+      <button type="button" class="modal-close" id="filter-modal-close">×</button>
+      <p class="eyebrow small"><span></span> Точная настройка</p>
+      <h2>Каким будет блюдо?</h2>
+      <div class="form-field"><label for="meal-category">Приём пищи</label><select id="meal-category"><option value="all">Любой</option><option value="Завтрак">Завтрак</option><option value="Обед">Обед</option><option value="Ужин">Ужин</option><option value="Перекус">Перекус</option></select></div>
+      <div class="range-field"><div><label for="max-time">Время приготовления</label><output id="max-time-output">60 минут</output></div><input type="range" min="10" max="60" step="5" value="60" id="max-time"></div>
+      <div class="range-field"><div><label for="max-kcal">Калорийность</label><output id="max-kcal-output">700 ккал</output></div><input type="range" min="250" max="700" step="50" value="700" id="max-kcal"></div>
+      <div class="range-field"><div><label for="max-cost">Бюджет блюда</label><output id="max-cost-output">15,0 BYN</output></div><input type="range" min="2" max="15" step="0.5" value="15" id="max-cost"></div>
+      <div class="form-field"><label for="allergen">Исключить аллерген</label><select id="allergen"><option value="none">Ничего не исключать</option><option value="dairy">Молочные продукты</option><option value="eggs">Яйца</option><option value="gluten">Глютен</option></select></div>
+      <div class="filter-modal-actions"><button type="button" class="outline-button" id="reset-filters">Сбросить</button><button type="submit" class="primary-button">Показать рецепты</button></div>
+    </form>
+  </div>
+
+  <div class="modal-backdrop" id="auth-modal" hidden>
+    <section class="account-modal-card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+      <button type="button" class="modal-close" id="auth-close">×</button>
+      <div class="account-mark">✦</div>
+      <p class="eyebrow small"><span></span> Личный холодильник</p>
+      <h2 id="auth-title">Создать аккаунт</h2>
+      <p class="account-lead" id="auth-subtitle">Сохраняйте избранное, меню и продукты между устройствами.</p>
+      <form id="auth-form">
+        <div class="form-field" id="auth-name-field"><label for="auth-name">Ваше имя</label><input id="auth-name" type="text" placeholder="Например, Иван" autocomplete="name"></div>
+        <div class="form-field"><label for="auth-email">Электронная почта</label><input id="auth-email" type="email" placeholder="you@example.com" autocomplete="email" required></div>
+        <div class="form-field"><label for="auth-password">Пароль</label><input id="auth-password" type="password" placeholder="Минимум 6 символов" minlength="6" autocomplete="new-password" required></div>
+        <button class="primary-button full" type="submit" id="auth-submit">Зарегистрироваться</button>
+      </form>
+      <div class="profile-card" id="profile-card" hidden></div>
+      <button class="text-button" id="auth-switch" type="button">У меня уже есть аккаунт</button>
+      <button class="logout-button" id="auth-logout" type="button" hidden>Выйти из аккаунта</button>
+      <p class="privacy-note">Демо-режим: данные сохраняются только в этом браузере.</p>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="streak-modal" hidden>
+    <section class="streak-modal-card" role="dialog" aria-modal="true" aria-labelledby="streak-title">
+      <button type="button" class="modal-close" id="streak-close">×</button>
+      <div class="streak-modal-icon">🔥</div>
+      <p class="eyebrow small"><span></span> Ваша привычка</p>
+      <h2 id="streak-title"><span id="streak-modal-count">7</span> дней без отходов</h2>
+      <p class="streak-lead">Вы уже неделю используете продукты вовремя. Ещё один маленький шаг — и новая награда.</p>
+      <div class="streak-progress"><span id="streak-progress-bar"></span></div>
+      <div class="streak-progress-labels"><span>0 дней</span><strong id="streak-goal-label">До 14 дней осталось 7</strong><span>14 дней</span></div>
+      <div class="streak-days" id="streak-days"></div>
+      <div class="streak-stats"><div><strong id="streak-saved-count">12</strong><small>продуктов спасено</small></div><div><strong>−2,4 кг</strong><small>еды не выброшено</small></div><div><strong>+18</strong><small>баллов заботы</small></div></div>
+      <button class="primary-button full" id="streak-claim" type="button">Отметить сегодняшний день</button>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+    }
+  </script>
+  <script>
+    (() => {
+      let revision;
+      setInterval(async () => {
+        try {
+          const data = await fetch('/__live', { cache: 'no-store' }).then(response => response.json());
+          if (revision && revision !== data.revision) location.reload();
+          revision = data.revision;
+        } catch (_) { /* Preview server may be stopped. */ }
+      }, 1200);
+    })();
+  </script>
+</body>
+</html>

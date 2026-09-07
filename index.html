@@ -3,8 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#123c34" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Smart Fridge" />
   <meta name="description" content="Умный холодильник подскажет, что приготовить из продуктов, которые уже есть дома." />
   <title>Умный холодильник — готовьте из того, что есть</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -21,6 +27,7 @@
         <button class="nav-link active" data-view="recipes">Рецепты</button>
         <button class="nav-link" data-view="planner">Моё меню</button>
         <button class="nav-link" data-view="favorites">Избранное</button>
+        <button class="nav-link" data-view="catalog">Каталог</button>
       </nav>
 
       <div class="top-actions">
@@ -53,10 +60,11 @@
             <div class="suggestions" id="suggestions" hidden></div>
           </div>
 
-          <div class="quick-add">
-            <span>Быстро добавить:</span>
-            <div id="quick-products"></div>
-          </div>
+          <button class="all-products-cta" id="all-products-button" type="button">
+            <span class="all-products-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg></span>
+            <span class="all-products-copy"><strong>Все продукты</strong><small>Открыть полный каталог из 132 позиций</small></span>
+            <span class="all-products-arrow" aria-hidden="true">→</span>
+          </button>
         </div>
 
         <div class="hero-visual" aria-label="Иллюстрация холодильника с продуктами">
@@ -74,7 +82,7 @@
             <div class="fridge-bottom"><span class="fridge-handle"></span><span class="food f-lemon">🍋</span></div>
           </div>
           <div class="floating-card fc-one"><span>🥬</span><div><small>Свежесть</small><strong>Ещё 2 дня</strong></div></div>
-          <div class="floating-card fc-two"><span>✨</span><div><small>Подобрано</small><strong>12 рецептов</strong></div></div>
+              <div class="floating-card fc-two"><span>✨</span><div><small>Подобрано</small><strong>124 рецепта</strong></div></div>
         </div>
       </section>
 
@@ -132,19 +140,47 @@
             <button class="filter settings-filter" id="filter-settings" aria-label="Другие фильтры">☷</button>
           </div>
 
+          <div class="dish-type-row" id="dish-type-filters" aria-label="Тип блюда">
+            <span class="dish-type-label">Хочу приготовить:</span>
+            <button class="dish-type-filter active" data-dish-type="all" type="button">Всё</button>
+            <button class="dish-type-filter" data-dish-type="salad" type="button">🥗 Салат</button>
+            <button class="dish-type-filter" data-dish-type="hot" type="button">🍲 Горячее</button>
+            <button class="dish-type-filter" data-dish-type="soup" type="button">🍵 Суп</button>
+            <button class="dish-type-filter" data-dish-type="dessert" type="button">🍰 Десерт</button>
+            <button class="dish-type-filter" data-dish-type="breakfast" type="button">🍳 Завтрак</button>
+            <button class="dish-type-filter" data-dish-type="snack" type="button">✨ Перекус</button>
+            <button class="dish-type-filter" data-dish-type="drink" type="button">🥤 Напиток</button>
+            <button class="dish-type-filter" data-dish-type="pp" type="button">🥦 ПП</button>
+          </div>
+
           <div class="recipe-grid" id="recipe-grid"></div>
           <button class="load-more" id="load-more">Показать ещё рецепты <span>↓</span></button>
         </div>
       </section>
 
       <section class="secondary-view" id="planner-view" hidden>
+        <button class="catalog-back-button" id="planner-back-button" type="button" aria-label="Вернуться к рецептам"><span aria-hidden="true">←</span></button>
         <div class="secondary-heading"><p class="eyebrow"><span></span> План без лишних забот</p><h1>Меню на неделю</h1><p>Перетаскивайте любимые блюда по дням и получайте общий список покупок.</p></div>
         <div class="week-grid" id="week-grid"></div>
       </section>
 
       <section class="secondary-view" id="favorites-view" hidden>
+        <button class="catalog-back-button" id="favorites-back-button" type="button" aria-label="Вернуться к рецептам"><span aria-hidden="true">←</span></button>
         <div class="secondary-heading"><p class="eyebrow"><span></span> Ваша коллекция</p><h1>Любимые рецепты</h1><p>Всё, что вы сохранили, — в одном месте.</p></div>
         <div class="recipe-grid" id="favorites-grid"></div>
+      </section>
+
+      <section class="secondary-view catalog-view" id="catalog-view" hidden>
+        <button class="catalog-back-button" id="catalog-back-button" type="button" aria-label="Вернуться к рецептам"><span aria-hidden="true">←</span></button>
+        <div class="secondary-heading"><p class="eyebrow"><span></span> Всё под рукой</p><h1>Каталог продуктов</h1><p>Посмотрите, что можно добавить в холодильник. Нажмите «Добавить», чтобы сразу увидеть подходящие рецепты.</p></div>
+        <div class="catalog-toolbar">
+          <label class="catalog-search" for="catalog-search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
+            <input id="catalog-search" type="search" placeholder="Найти продукт в каталоге" autocomplete="off" />
+          </label>
+          <span class="catalog-count" id="catalog-count"></span>
+        </div>
+        <div class="catalog-grid" id="catalog-grid"></div>
       </section>
     </main>
 
@@ -162,6 +198,41 @@
     <div id="shopping-list"></div>
     <button class="primary-button full" id="copy-list">Скопировать список</button>
   </aside>
+
+  <div class="modal-backdrop" id="scan-modal" hidden>
+    <section class="scan-modal-card" role="dialog" aria-modal="true" aria-labelledby="scan-title">
+      <button type="button" class="modal-close" id="scan-close" aria-label="Закрыть сканирование">×</button>
+      <div class="scan-modal-icon">🧾</div>
+      <p class="eyebrow small"><span></span> Умный сканер</p>
+      <h2 id="scan-title">Сканируем чек</h2>
+      <p class="scan-lead">Сфотографируйте чек или загрузите готовое фото. Мы найдём знакомые продукты и добавим их в холодильник.</p>
+      <div class="scan-actions">
+        <button type="button" class="primary-button" id="scan-camera-button">Сфотографировать</button>
+        <button type="button" class="outline-button" id="scan-upload-button">Загрузить фото</button>
+      </div>
+      <input id="scan-camera-input" type="file" accept="image/*" capture="environment" hidden>
+      <input id="scan-upload-input" type="file" accept="image/*" hidden>
+      <div class="scan-dropzone" id="scan-dropzone" tabindex="0" role="button" aria-label="Перетащите сюда фотографию чека">
+        <span class="scan-dropzone-icon">⌁</span>
+        <strong>Или перетащите снимок сюда</strong>
+        <small>JPG, PNG или WEBP · лучше при хорошем освещении</small>
+      </div>
+      <div class="scan-preview" id="scan-preview" hidden>
+        <img id="scan-preview-image" alt="Предпросмотр фотографии чека">
+        <button type="button" class="scan-change-button" id="scan-change-button">Выбрать другой снимок</button>
+      </div>
+      <div class="scan-progress" id="scan-progress" hidden>
+        <div class="scan-progress-track"><span id="scan-progress-bar"></span></div>
+        <p id="scan-progress-label">Подготавливаем распознавание…</p>
+      </div>
+      <div class="scan-results" id="scan-results" hidden>
+        <div class="scan-results-heading"><strong id="scan-results-title">Нашли продукты</strong><span id="scan-confidence"></span></div>
+        <div class="scan-found-list" id="scan-found-list"></div>
+        <button type="button" class="primary-button full" id="scan-add-button">Добавить выбранные продукты</button>
+      </div>
+      <p class="scan-note" id="scan-note">Фото обрабатывается в браузере. Если строка не распознается, попробуйте снимок крупнее и ровнее.</p>
+    </section>
+  </div>
 
   <div class="modal-backdrop" id="recipe-modal" hidden>
     <article class="recipe-modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
@@ -230,6 +301,11 @@
 
   <div class="toast" id="toast" role="status"></div>
   <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+    }
+  </script>
   <script>
     (() => {
       let revision;
